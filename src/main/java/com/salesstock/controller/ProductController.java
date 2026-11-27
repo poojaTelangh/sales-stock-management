@@ -3,6 +3,7 @@ package com.salesstock.controller;
 
 import com.salesstock.entity.Product;
 import com.salesstock.service.ProductService;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -48,7 +49,18 @@ public class ProductController {
     @DeleteMapping("/{id}")
     public String deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
-        return "Product deleted successfully!";
+        return "Product deleted successfully";
+    }
+
+    // Search by name
+    @GetMapping("/search/name")
+    public List<Product> searchByName(@RequestParam String name) {
+        return productService.searchByName(name);
+    }
+
+    // Search by category
+    @GetMapping("/search/category")
+    public List<Product> searchByCategory(@RequestParam String category) {
+        return productService.searchByCategory(category);
     }
 }
-

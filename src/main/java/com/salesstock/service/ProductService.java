@@ -12,7 +12,6 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
-    // Constructor injection
     public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
@@ -36,22 +35,31 @@ public class ProductService {
 
     // Update product
     public Product updateProduct(Long id, Product updatedProduct) {
-
         Product existingProduct = getProductById(id);
 
         existingProduct.setName(updatedProduct.getName());
         existingProduct.setCategory(updatedProduct.getCategory());
         existingProduct.setPrice(updatedProduct.getPrice());
         existingProduct.setQuantity(updatedProduct.getQuantity());
-        existingProduct.setMinimumStock(updatedProduct.getMinimumStock());
 
         return productRepository.save(existingProduct);
     }
 
     // Delete product
     public void deleteProduct(Long id) {
-        Product existingProduct = getProductById(id);
-        productRepository.delete(existingProduct);
+        Product product = getProductById(id);
+        productRepository.delete(product);
+    }
+
+    // Search products by name
+    public List<Product> searchByName(String name) {
+        return productRepository.findByNameContainingIgnoreCase(name);
+    }
+
+    // Search products by category
+    public List<Product> searchByCategory(String category) {
+        return productRepository.findByCategoryContainingIgnoreCase(category);
     }
 }
+
 
