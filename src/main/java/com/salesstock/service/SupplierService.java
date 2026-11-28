@@ -3,6 +3,7 @@ package com.salesstock.service;
 
 import com.salesstock.entity.Supplier;
 import com.salesstock.repository.SupplierRepository;
+import com.salesstock.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public class SupplierService {
 
     public Supplier getSupplierById(Long id) {
         return supplierRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Supplier not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Supplier not found with ID: " + id));
     }
 
     public Supplier updateSupplier(Long id, Supplier updatedSupplier) {

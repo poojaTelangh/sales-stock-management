@@ -7,16 +7,19 @@ public class DashboardSummary {
     private long totalProducts;
     private long lowStockProducts;
     private long totalSales;
+    private BigDecimal totalSalesAmount;
     private BigDecimal todaySales;
 
     public DashboardSummary() {
     }
 
     public DashboardSummary(long totalProducts, long lowStockProducts,
-                            long totalSales, BigDecimal todaySales) {
+                            long totalSales, BigDecimal totalSalesAmount,
+                            BigDecimal todaySales) {
         this.totalProducts = totalProducts;
         this.lowStockProducts = lowStockProducts;
         this.totalSales = totalSales;
+        this.totalSalesAmount = totalSalesAmount;
         this.todaySales = todaySales;
     }
 
@@ -36,12 +39,22 @@ public class DashboardSummary {
         this.lowStockProducts = lowStockProducts;
     }
 
+    /** Number of sales recorded. */
     public long getTotalSales() {
         return totalSales;
     }
 
     public void setTotalSales(long totalSales) {
         this.totalSales = totalSales;
+    }
+
+    /** Total money (sum of all sales). */
+    public BigDecimal getTotalSalesAmount() {
+        return totalSalesAmount;
+    }
+
+    public void setTotalSalesAmount(BigDecimal totalSalesAmount) {
+        this.totalSalesAmount = totalSalesAmount;
     }
 
     public BigDecimal getTodaySales() {

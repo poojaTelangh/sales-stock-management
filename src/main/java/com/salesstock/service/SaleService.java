@@ -37,6 +37,12 @@ public class SaleService {
         }
 
         Sale sale = new Sale();
+
+        String customer = request.getCustomerName();
+        sale.setCustomerName(
+                customer == null || customer.isBlank()
+                        ? "Walk-in customer"
+                        : customer.trim());
         BigDecimal totalAmount = BigDecimal.ZERO;
 
         for (SaleRequest.SaleLineRequest line : request.getItems()) {

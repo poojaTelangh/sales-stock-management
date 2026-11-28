@@ -20,6 +20,8 @@ public class Sale {
 
     private LocalDateTime saleDate;
 
+    private String customerName;
+
     @OneToMany(
         mappedBy = "sale",
         cascade = CascadeType.ALL,
@@ -51,6 +53,14 @@ public class Sale {
 
     public void setTotalAmount(BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
     }
 
     public LocalDateTime getSaleDate() {

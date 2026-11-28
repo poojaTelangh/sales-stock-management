@@ -4,9 +4,18 @@ import java.util.List;
 
 public class SaleRequest {
 
+    private String customerName;
     private List<SaleLineRequest> items;
 
     public SaleRequest() {
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
     }
 
     public List<SaleLineRequest> getItems() {

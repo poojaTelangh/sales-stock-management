@@ -17,6 +17,9 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
     BigDecimal sumSalesBetween(@Param("start") LocalDateTime start,
                                @Param("end") LocalDateTime end);
 
+    @Query("SELECT COALESCE(SUM(s.totalAmount), 0) FROM Sale s")
+    BigDecimal sumAllSales();
+
     @EntityGraph(attributePaths = {"items", "items.product"})
     List<Sale> findAllByOrderBySaleDateDesc();
 

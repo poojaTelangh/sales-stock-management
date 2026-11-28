@@ -11,6 +11,7 @@ public class SaleResponse {
     private Long id;
     private LocalDateTime saleDate;
     private BigDecimal totalAmount;
+    private String customerName;
     private List<Item> items;
 
     public static SaleResponse from(Sale sale) {
@@ -18,6 +19,7 @@ public class SaleResponse {
         r.id = sale.getId();
         r.saleDate = sale.getSaleDate();
         r.totalAmount = sale.getTotalAmount();
+        r.customerName = sale.getCustomerName();
         r.items = sale.getItems().stream().map(i -> {
             Item item = new Item();
             item.productId = i.getProduct().getId();
@@ -33,6 +35,7 @@ public class SaleResponse {
     public Long getId() { return id; }
     public LocalDateTime getSaleDate() { return saleDate; }
     public BigDecimal getTotalAmount() { return totalAmount; }
+    public String getCustomerName() { return customerName; }
     public List<Item> getItems() { return items; }
 
     public static class Item {

@@ -31,15 +31,20 @@ public class DashboardService {
 
         BigDecimal todaySales = saleRepository.sumSalesBetween(
                 startOfDay, startOfTomorrow);
+        BigDecimal totalSalesAmount = saleRepository.sumAllSales();
 
         if (todaySales == null) {
             todaySales = BigDecimal.ZERO;
+        }
+        if (totalSalesAmount == null) {
+            totalSalesAmount = BigDecimal.ZERO;
         }
 
         return new DashboardSummary(
                 totalProducts,
                 lowStockProducts,
                 totalSales,
+                totalSalesAmount,
                 todaySales
         );
     }
