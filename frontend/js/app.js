@@ -5,7 +5,7 @@ const API_BASE = "http://localhost:8080/api";
 const $ = (selector) => document.querySelector(selector);
 
 let products = [];
-let sales = JSON.parse(localStorage.getItem("sales") || "[]");
+let sales = [];
 
 /* -------------------- HELPERS -------------------- */
 
@@ -136,10 +136,15 @@ async function renderDashboardSummary() {
         if ($("#low-stock")) {
             $("#low-stock").textContent = summary.lowStockProducts ?? 0;
         }
-
         if ($("#total-sales")) {
-            $("#total-sales").textContent = money(summary.totalSales ?? 0);
+        const count = Number(summary.totalSales ?? 0);
+        const revenueToday = money(summary.todaySales ?? 0);
+
+        $("#total-sales").textContent =
+        `${count} ${count === 1 ? "sale" : "sales"} • ${revenueToday} today`;
         }
+        
+        
     } catch (error) {
         console.error("Could not load dashboard summary:", error);
 
@@ -302,7 +307,16 @@ async function handleStockTableClick(event) {
 }
 
 /* -------------------- SALES -------------------- */
-
+async function loadSales() {
+    try {
+        const data = await apiRequest("/sales");
+        sales = Array.isArray(data) ? data : [];
+        renderSalesTable();
+    } catch (error) {
+        console.error("Could not load sales:", error);
+        alert("Could not load sales from the backend.");
+    }
+}
 function renderSaleDropdown() {
     const dropdown = $("#sale-product");
     if (!dropdown) return;
@@ -351,16 +365,24 @@ function renderSalesTable() {
         return;
     }
 
-    table.innerHTML = [...sales].reverse().map((sale) => `
-        <tr>
-            <td>${escapeHTML(sale.date)}</td>
-            <td>${escapeHTML(sale.productName)}</td>
-            <td>${sale.quantity}</td>
-            <td>${money(sale.unitPrice)}</td>
-            <td>${money(sale.total)}</td>
-            <td>${escapeHTML(sale.customer || "Walk-in customer")}</td>
-        </tr>
-    `).join("");
+    const rows = [...sales].reverse().flatMap((sale) => {
+        const items = Array.isArray(sale.items) ? sale.items : [];
+
+        return items.map((item) => `
+            <tr>
+                <td>${escapeHTML(sale.saleDate || "—")}</td>
+                <td>${escapeHTML(item.productName || "Product")}</td>
+                <td>${item.quantity ?? 0}</td>
+                <td>${money(item.unitPrice)}</td>
+                <td>${money(item.subtotal)}</td>
+                <td>—</td>
+            </tr>
+        `);
+    });
+
+    table.innerHTML = rows.length
+        ? rows.join("")
+        : `<tr><td colspan="6">No sale items found.</td></tr>`;
 }
 
 async function handleSaleSubmit(event) {
@@ -368,7 +390,6 @@ async function handleSaleSubmit(event) {
 
     const productId = Number($("#sale-product").value);
     const quantity = Number($("#sale-quantity").value);
-    const customer = $("#customer").value.trim() || "Walk-in customer";
     const product = products.find((item) => item.id === productId);
 
     if (!product || quantity < 1) {
@@ -382,32 +403,32 @@ async function handleSaleSubmit(event) {
     }
 
     try {
-        const unitPrice = product.price;
-        const total = unitPrice * quantity;
-
-        product.quantity -= quantity;
-        await updateProduct(product);
-
-        sales.push({
-            date: new Date().toLocaleDateString("en-IN"),
-            productId: product.id,
-            productName: product.name,
-            quantity,
-            unitPrice,
-            total,
-            customer
+        await apiRequest("/sales", {
+            method: "POST",
+            body: JSON.stringify({
+                items: [
+                    {
+                        productId: product.id,
+                        quantity: quantity
+                    }
+                ]
+            })
         });
-
-        saveSales();
 
         $("#sale-form").reset();
         updateSaleTotal();
-        showMessage("#sale-message", "Sale recorded and stock updated.");
 
         await loadProducts();
+        await loadSales();
+
+        showMessage("#sale-message", "Sale recorded successfully.");
     } catch (error) {
         console.error("Could not record sale:", error);
-        showMessage("#sale-message", "Could not record sale. Check Spring Boot and the backend.", true);
+        showMessage(
+            "#sale-message",
+            "Could not record sale. Check the backend response.",
+            true
+        );
     }
 }
 
@@ -471,7 +492,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         showPage("stock");
         $("#product-name")?.focus();
     });
-
     await loadProducts();
+    await loadSales();
     showPage("dashboard");
+    
 });
