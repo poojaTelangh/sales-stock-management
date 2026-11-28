@@ -1,7 +1,7 @@
-
 package com.salesstock.service;
 
 import com.salesstock.entity.Category;
+import com.salesstock.exception.ResourceNotFoundException;
 import com.salesstock.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,24 +16,20 @@ public class CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
-    // Add category
     public Category addCategory(Category category) {
         return categoryRepository.save(category);
     }
 
-    // Get all categories
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
 
-    // Get category by ID
     public Category getCategoryById(Long id) {
         return categoryRepository.findById(id)
                 .orElseThrow(() ->
-                        new RuntimeException("Category not found with ID: " + id));
+                        new ResourceNotFoundException("Category not found with ID: " + id));
     }
 
-    // Update category
     public Category updateCategory(Long id, Category updatedCategory) {
         Category existingCategory = getCategoryById(id);
 
@@ -43,13 +39,11 @@ public class CategoryService {
         return categoryRepository.save(existingCategory);
     }
 
-    // Delete category
     public void deleteCategory(Long id) {
         Category category = getCategoryById(id);
         categoryRepository.delete(category);
     }
 
-    // Search category by name
     public List<Category> searchByName(String name) {
         return categoryRepository.findByNameContainingIgnoreCase(name);
     }
