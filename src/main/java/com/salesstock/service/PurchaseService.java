@@ -1,7 +1,7 @@
-
 package com.salesstock.service;
 
 import com.salesstock.entity.Purchase;
+import com.salesstock.exception.ResourceNotFoundException;
 import com.salesstock.repository.PurchaseRepository;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +35,7 @@ public class PurchaseService {
 
     public Purchase getPurchaseById(Long id) {
         return purchaseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new ResourceNotFoundException(
                         "Purchase not found with ID: " + id));
     }
 
