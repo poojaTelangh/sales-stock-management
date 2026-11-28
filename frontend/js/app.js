@@ -138,10 +138,10 @@ async function renderDashboardSummary() {
         }
         if ($("#total-sales")) {
         const count = Number(summary.totalSales ?? 0);
-        const revenueToday = money(summary.todaySales ?? 0);
+        const revenue = money(summary.todaySales ?? 0);
 
         $("#total-sales").textContent =
-        `${count} ${count === 1 ? "sale" : "sales"} • ${revenueToday} today`;
+        `${count} ${count === 1 ? "sale" : "sales"} • ${revenue} total`;
         }
         
         

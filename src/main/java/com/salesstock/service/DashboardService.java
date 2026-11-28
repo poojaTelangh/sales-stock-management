@@ -30,17 +30,26 @@ public class DashboardService {
         LocalDateTime startOfTomorrow = startOfDay.plusDays(1);
 
         BigDecimal todaySales = saleRepository.sumSalesBetween(
-                startOfDay, startOfTomorrow);
+                startOfDay,
+                startOfTomorrow
+        );
 
         if (todaySales == null) {
             todaySales = BigDecimal.ZERO;
+        }
+
+        BigDecimal totalRevenue = saleRepository.sumAllSales();
+
+        if (totalRevenue == null) {
+            totalRevenue = BigDecimal.ZERO;
         }
 
         return new DashboardSummary(
                 totalProducts,
                 lowStockProducts,
                 totalSales,
-                todaySales
+                todaySales,
+                totalRevenue
         );
     }
 }
